@@ -386,21 +386,31 @@ OpenBtn.MouseEnter:Connect(function() Tween(OpenBtn, TI(0.15), {BackgroundColor3
 OpenBtn.MouseLeave:Connect(function() Tween(OpenBtn, TI(0.15), {BackgroundColor3 = TH.Mag}) end)
 
 -- Drag
+local DragBtn = Instance.new("TextButton", TB)
+DragBtn.Name = "DragBtn"
+DragBtn.Size = UDim2.new(1, -70, 1, 0)
+DragBtn.Position = UDim2.new(0, 0, 0, 0)
+DragBtn.BackgroundTransparency = 1
+DragBtn.Text = ""
+DragBtn.ZIndex = 52
+DragBtn.Active = true
+
 local drag, ds, sp
-TB.InputBegan:Connect(function(i)
-    if i.UserInputType == Enum.UserInputType.MouseButton1 then
+DragBtn.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
         drag = true; ds = i.Position; sp = Main.Position
+        i.Changed:Connect(function()
+            if i.UserInputState == Enum.UserInputState.End then drag = false end
+        end)
     end
 end)
 UserInputService.InputChanged:Connect(function(i)
-    if drag and i.UserInputType == Enum.UserInputType.MouseMovement then
+    if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
         local d = i.Position - ds
         Main.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y)
     end
 end)
-UserInputService.InputEnded:Connect(function(i)
-    if i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end
-end)
+
 
 -- ============================================================
 -- TAB SYSTEM
